@@ -143,3 +143,5 @@
 [Figma-SiteMap](https://www.figma.com/board/gZNzboCqbnUMJA4q33esZJ/E-Lab-for-Web?node-id=0-1&t=hAzT1R1f8YySLlfR-1)
 # UI
 [Figma-UI](https://www.figma.com/design/rfwuNtuYFIIk9KT3QqDbU6/E-Lab-for-Web?node-id=1-59&p=f&t=d640l6WrNcyXetf3-0)
+# ER図
+[ER図](https://dbdiagram.io/d/68245f655b2fc4582f8a9e9c)
