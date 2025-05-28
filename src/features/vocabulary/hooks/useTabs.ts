@@ -1,25 +1,29 @@
 import { useState } from "react";
 
-export interface Tab {
+interface Tab {
   id: string;
   title: string;
 }
 
-export const useTabs = (initialTabs: Tab[]) => {
+export function useTabs(initialTabs: Tab[]) {
   const [tabs, setTabs] = useState<Tab[]>(initialTabs);
-  const [activeTabId, setActiveTabId] = useState<string>(initialTabs[0]?.id ?? "");
+  const [activeTabId, setActiveTabId] = useState(initialTabs[0]?.id || "");
 
   const addTab = () => {
     const newId = crypto.randomUUID();
-    setTabs((prev) => [...prev, { id: newId, title: `tab${prev.length + 1}` }]);
-    setActiveTabId(newId);
+    const newTab = { id: newId, title: `新しいタブ` };
+    setTabs((prev) => [...prev, newTab]);
+    setActiveTabId(newId); // 追加後、即アクティブに
+
+    
+    return newTab;
   };
 
   const removeTab = (id: string) => {
     setTabs((prev) => prev.filter((tab) => tab.id !== id));
-    if (activeTabId === id) {
-      const remainingTabs = tabs.filter((tab) => tab.id !== id);
-      setActiveTabId(remainingTabs.length > 0 ? remainingTabs[0].id : "");
+    if (activeTabId === id && tabs.length > 1) {
+      const remaining = tabs.filter((tab) => tab.id !== id);
+      setActiveTabId(remaining[0].id);
     }
   };
 
@@ -27,5 +31,19 @@ export const useTabs = (initialTabs: Tab[]) => {
     setActiveTabId(id);
   };
 
-  return { tabs, activeTabId, addTab, removeTab, changeActiveTab };
-};
+  // タイトル更新用
+  const updateTabTitle = (id: string, newTitle: string) => {
+    setTabs((prev) =>
+      prev.map((tab) => (tab.id === id ? { ...tab, title: newTitle } : tab))
+    );
+  };
+
+  return {
+    tabs,
+    activeTabId,
+    addTab,
+    removeTab,
+    changeActiveTab,
+    updateTabTitle,
+  };
+}

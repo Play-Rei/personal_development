@@ -8,5 +8,19 @@ export const useTabWords = (initialData: Record<string, WordRow[]>) => {
     setTabWords((prev) => ({ ...prev, [tabId]: newWords }));
   };
 
-  return { tabWords, updateWords };
+  const addTabWords = (tabId: string) => {
+    setTabWords((prev) => ({ ...prev, [tabId]: [] }));
+  };
+
+  const removeTabWords = (tabId: string) => {
+    const { [tabId]: _, ...rest } = tabWords;
+    setTabWords(rest);
+  };
+
+  return {
+    tabWords,
+    updateWords,
+    addTabWords,
+    removeTabWords,
+  };
 };

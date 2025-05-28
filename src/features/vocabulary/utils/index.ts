@@ -18,18 +18,6 @@ export const generateRandomId = (length = 10): string => {
   import type { WordRow } from "../types/types";
   
   export const initialTabWordsMap: Record<string, WordRow[]> = {
-    tab1: [
-      {
-        id: "word1",
-        isChecked: false,
-        word: "apple",
-        meaning: "りんご",
-        partOfSpeech: "noun",
-        exampleSentence: "I ate an apple.",
-        exampleTranslation: "私はりんご",
-      },
-    ],
-    tab2: [],
-    tab3: [],
+    tab1: []
   };
   

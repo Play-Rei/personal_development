@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "@/features/dashboard/components/Sidebar";
 import VocabForm from "@/features/vocabulary/components/VocabForm";
 import WordTableComponent from "@/features/vocabulary/components/WordTableComponent";
@@ -13,27 +13,59 @@ const DemoCreateVocabPage = () => {
   const [title, setTitle] = useState("");
   const [noteId] = useState(() => crypto.randomUUID());
 
-  const { tabs, activeTabId, addTab, removeTab, changeActiveTab } = useTabs([
-    { id: "tab1", title: "tab1" },
-    { id: "tab2", title: "tab2" },
-    { id: "tab3", title: "tab3" },
+  const { tabs, activeTabId, addTab, removeTab, changeActiveTab, updateTabTitle } = useTabs([
+    { id: "tab1", title: "新しいタブ" },
   ]);
 
-  const { tabWords, updateWords } = useTabWords(initialTabWordsMap);
+  const { tabWords, updateWords, addTabWords, removeTabWords } = useTabWords(initialTabWordsMap);
 
   const { lastSavedAt, setLastSavedAt, relativeTime } = useAutoSave();
 
-  const wordTableRef = useRef<WordTableHandle>(null);
+  // tableRefsをuseStateで管理し、tabsの変化に追従させる
+  const [tableRefs, setTableRefs] = useState<Record<string, React.RefObject<WordTableHandle | null>>>(() =>
+    Object.fromEntries(tabs.map(tab => [tab.id, React.createRef<WordTableHandle>()]))
+  );
+
+  useEffect(() => {
+    setTableRefs(prev => {
+      const newRefs = { ...prev };
+      // 新しいタブがあったらrefを追加
+      tabs.forEach(tab => {
+        if (!newRefs[tab.id]) {
+          newRefs[tab.id] = React.createRef<WordTableHandle>();
+        }
+      });
+      // 削除されたタブのrefは削除
+      Object.keys(newRefs).forEach(key => {
+        if (!tabs.find(tab => tab.id === key)) {
+          delete newRefs[key];
+        }
+      });
+      return newRefs;
+    });
+  }, [tabs]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const finalTitle = title.trim() || "unknown";
+
     try {
-      // Firestoreなど保存処理
+      console.log("🔸保存開始:", finalTitle);
+
+      // すべてのタブのテーブルデータを取得・出力
+      for (const tab of tabs) {
+        const ref = tableRefs[tab.id];
+        const data = ref?.current?.getSaveData();
+        console.log(`📘 タブ: ${tab.title}`);
+        console.log(data?.blocks[0].data.words ?? []);
+      }
+
+      // ここにFirestoreなどの保存処理を書く
+
+      setLastSavedAt(new Date());
     } catch (err) {
       console.error("ノートの保存に失敗しました", err);
     }
-    setLastSavedAt(new Date());
   };
 
   useEffect(() => {
@@ -45,7 +77,18 @@ const DemoCreateVocabPage = () => {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [title]);
+  }, [title, tabs, tableRefs]);
+
+  const handleAddTab = () => {
+    const newTab = addTab();
+    addTabWords(newTab.id);
+    // 新しいtabのrefはuseEffectで追加されるのでここでは不要
+  };
+
+  const handleRemoveTab = (tabId: string) => {
+    removeTab(tabId);
+    removeTabWords(tabId);
+  };
 
   return (
     <div className="flex">
@@ -65,8 +108,9 @@ const DemoCreateVocabPage = () => {
             tabs={tabs}
             activeTabId={activeTabId}
             onTabChange={changeActiveTab}
-            onAddTab={addTab}
-            onRemoveTab={removeTab}
+            onAddTab={handleAddTab}
+            onRemoveTab={handleRemoveTab}
+            onUpdateTabTitle={updateTabTitle}
           />
         </div>
 
@@ -74,7 +118,7 @@ const DemoCreateVocabPage = () => {
           {tabs.map((tab) => (
             <div key={tab.id} style={{ display: activeTabId === tab.id ? "block" : "none" }}>
               <WordTableComponent
-                ref={activeTabId === tab.id ? wordTableRef : null}
+                ref={tableRefs[tab.id]}
                 id={tab.id}
                 allWords={tabWords}
                 onChange={(newWords) => updateWords(tab.id, newWords)}
