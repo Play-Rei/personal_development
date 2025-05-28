@@ -1,0 +1,23 @@
+table {
+    table-layout: auto;
+}
+
+.table-header-cell {
+    position: relative;
+  }
+  
+.table-header-cell .resize-handle {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 3px;
+    cursor: col-resize;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+  
+.table-header-cell:hover .resize-handle {
+    opacity: 1;
+}

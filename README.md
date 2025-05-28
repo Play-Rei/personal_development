@@ -1,143 +1,54 @@
-# E-Lab for Web
+# React + TypeScript + Vite
 
-## サービス概要
-本サービスは、英語学習を効率化・習慣化するためのWebベースの学習支援ツールです。特に「聞く・読む・書く・話す」の4技能をバランスよく伸ばすことを目的とし、YouTube動画や字幕を活用したノート作成機能と単語帳機能を中心に構成されています。
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-ユーザーはWeb上でYouTube動画を視聴しながら、字幕を確認し、動画横にノートをMarkdown形式で記録できます。ノートには単語や例文、メモなどを保存でき、タグによる整理・管理が可能です。記録したデータはモバイルアプリと連携し、スキマ時間での復習や見直しができる仕組みを目指しています。
-## このサービスへの思い・作りたい理由
-英語学習において「インプットだけで終わってしまう」「見た内容をうまく記録・復習できない」といった課題を多くの学習者が抱えています。学生であれば、授業の内容をノートに記録しても、見返すことが少なく、次に繋げる学習ができていないことも少なくありません。
+Currently, two official plugins are available:
 
-このサービスは、**「自分の学習記録を残す習慣」**を作りながら、自然に語彙力やリスニング力を高められる環境を提供することを目指しています。また、ノート機能にMarkdownを採用することで、学習の自由度・柔軟性を高め、自分だけの学習スタイルを確立できるように設計を目指します。
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## ユーザー層について
-以下のようなユーザー層を想定しています：
+## Expanding the ESLint configuration
 
-- 英語学習を継続したいが、学習内容が定着しないと感じている人
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-- 英語学習系YouTube動画やTEDなどを視聴しているが、ただ見るだけになっている人
+```js
+export default tseslint.config({
+  extends: [
+    // Remove ...tseslint.configs.recommended and replace with this
+    ...tseslint.configs.recommendedTypeChecked,
+    // Alternatively, use this for stricter rules
+    ...tseslint.configs.strictTypeChecked,
+    // Optionally, add this for stylistic rules
+    ...tseslint.configs.stylisticTypeChecked,
+  ],
+  languageOptions: {
+    // other options...
+    parserOptions: {
+      project: ['./tsconfig.node.json', './tsconfig.app.json'],
+      tsconfigRootDir: import.meta.dirname,
+    },
+  },
+})
+```
 
-- 単語帳やノートを自作しているが、管理や復習が煩雑な人
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-- モバイルでも学習を継続したい社会人・学生
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-## サービスの利用イメージ
-1. Web版にログイン
-
-2. 画面左にYouTube動画（埋め込み）、下部に字幕を表示
-
-3. 画面右のMarkdownエリアに学習ノートを作成（単語・文法・例文・気づきなど）
-
-4. ノートにはタグ付けが可能
-
-5. ノート内の単語は単語帳として保存、モバイルアプリと連携して復習
-
-6. モバイルアプリでは、タグ・日付などで学習内容を閲覧・復習できる
-
-## ユーザーの獲得について
-- 英語学習コミュニティ（SNSやDiscord）での情報共有
-## サービスの差別化・推しポイント
-- YouTube＋字幕＋ノートの一体型UIで、実践的かつ効率的な学習が可能
-- Markdown対応で、柔軟で自由度の高いノート作成体験
-- モバイルアプリと連携した復習特化の設計
-- タグベースの検索・管理で、学習記録が資産になる
-
-## 機能候補
-### 【MVP（Minimum Viable Product）】
-- ノート記述機能（Markdown対応）
-- ノートと単語帳の保存・編集機能
-### その後の機能
-- YouTube動画の埋め込み表示
-- 字幕の取得と表示
-- タグ機能
-- モバイルアプリとの連携（基本的な同期）
-- 音声読み上げ（Text-to-Speech）単語帳に登録した単語や例文を自動音声で再生
-
-### 【本リリース】
-- ノート記述機能（Markdown対応）
-- ノートと単語帳の保存・編集機能
-
-## 機能の実装方針予定
-- ノート記述機能（Markdown対応）
-    - @uiw/react-md-editorを利用予定
-
-- ノートと単語帳の保存・編集機能
-    - FirebaseのCloudStorageに保存
-
-### 【フロントエンド】
-
-| 機能                     | 使用技術・パッケージ                                                              |
-| ---------------------- | ----------------------------------------------------------------------- |
-| **UIフレームワーク**          | **React** (`react`, `react-dom`, `react-router-dom`)                    |
-| **状態管理**               | **React Context** または **Redux** (`react-redux`, `@reduxjs/toolkit`)     |
-| **スタイリング**             | **CSS（styled-components / TailwindCSS / SASS）**                         |
-| **Markdownエディタ**       | **@uiw/react-md-edito**              |
-| **ローカルストレージ保存**        |**localStorage**                   |
-| **Firebase認証**         | **Firebase Authentication** (`firebase/auth`)                           |
-| **Firebase Firestore** | **Firestore** (`firebase/firestore`)                                    |
-| **Firebase Storage**   | **Firebase Storage** (`firebase/storage`)                               |
-
-
-### 【バックエンド】
-| 機能                     | 使用技術・パッケージ                                   |
-| ---------------------- | -------------------------------------------- |
-| **Firebase Functions** | **Firebase Cloud Functions**（サーバーレスバックエンド）   |
-| **データベース**             | **Firebase Firestore**                       |
-| **認証**                 | **Firebase Authentication**                  |
-| **クラウドストレージ**          | **Firebase Storage**                         |
-| **デプロイメント**            | **Firebase Hosting**, **Firebase Functions** |
-
-
-# サイトマップ
-
-### **ホーム**
-    - サービス概要
-
-### **ユーザー登録・認証**
-    - 新規登録
-    - Google認証、メールアドレスでの新規登録
-    - ユーザー名設定
-
-### **ログイン**
-    - メールアドレス・パスワード、またはGoogle認証でログイン
-    - パスワードリセット
-
-### **ノート・単語帳管理**
-    - 作成したノート・単語帳の一覧
-    - ノート・単語帳の編集・削除
-
-
-### **ノート一覧**
-    - 作成したノートや保存したコンテンツの一覧
-    - ノートのタイトル、作成日
-### **ノート作成・編集**
-    - Markdownエディタでノート作成・編集
-    - YouTube動画の埋め込みと字幕表示
-    - 単語帳・メモの追加
-    - ノートへのタグ付け
-### **ノート詳細**
-    - ノートの詳細表示
-    - 追加した単語・メモの表示
-    - タグ情報や関連する動画・コンテンツへのリンク
-
-### **単語帳**
-    - 単語帳一覧
-
-### **単語帳作成・編集**
-    - 単語・意味の追加、削除、編集
-    - 単語に関連する例文や音声データの追加
-
-### **設定**
-    - アカウント設定（メールアドレス、パスワード変更）
-    - ダークモード・ライトモード切替
-
-### **法的情報**
-    - 利用規約
-    - プライバシーポリシー
-    - お問い合わせ
-
-# 画面マップ
-[Figma-SiteMap](https://www.figma.com/board/gZNzboCqbnUMJA4q33esZJ/E-Lab-for-Web?node-id=0-1&t=hAzT1R1f8YySLlfR-1)
-# UI
-[Figma-UI](https://www.figma.com/design/rfwuNtuYFIIk9KT3QqDbU6/E-Lab-for-Web?node-id=1-59&p=f&t=d640l6WrNcyXetf3-0)
-# ER図
-[ER図](https://dbdiagram.io/d/68245f655b2fc4582f8a9e9c)
+export default tseslint.config({
+  plugins: {
+    // Add the react-x and react-dom plugins
+    'react-x': reactX,
+    'react-dom': reactDom,
+  },
+  rules: {
+    // other rules...
+    // Enable its recommended typescript rules
+    ...reactX.configs['recommended-typescript'].rules,
+    ...reactDom.configs.recommended.rules,
+  },
+})
+```
